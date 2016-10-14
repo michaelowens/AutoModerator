@@ -1,4 +1,4 @@
 ---
 discord:
   token:
-  config_channel:
+  config_channel: amconfig
