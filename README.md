@@ -1,3 +1,7 @@
+[![Build Status](https://travis-ci.org/michaelowens/AutoModerator.svg?branch=master)](https://travis-ci.org/michaelowens/AutoModerator)
+[![Test Coverage](https://codeclimate.com/github/michaelowens/AutoModerator/badges/coverage.svg)](https://codeclimate.com/github/michaelowens/AutoModerator/coverage)
+
+
 # AutoModerator
 
 A discord bot, configurable via a channel with YAML. Heavily inspired by AutoModerator for Reddit. Or a direct copy, you decide.
