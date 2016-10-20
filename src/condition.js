@@ -27,7 +27,7 @@ export type ConditionValues = {
 type ConditionError =
   | "UNEXPECTED_TYPE"
 
-export const matchModifiers = {
+export const MatchModifiers = {
   'full-exact': '^{0}$',
   'full-text': '^\W*{0}\W*$',
   'includes': '{0}',
@@ -102,7 +102,7 @@ export default class Condition {
     // get actions
     if (this.data.action) {
       this.data.action.split('+').forEach(action => {
-        this.actions.push(action)
+        this.actions.push(action.trim())
       })
     }
   }
@@ -165,7 +165,7 @@ export default class Condition {
       value = value.join('|')
     }
 
-    return this.matchPattern.replace('{0}', `(${value})`)
+    return pattern.replace('{0}', `(${value})`)
   }
 
   prepareRegexString(value: string) {
@@ -195,7 +195,7 @@ export default class Condition {
       }
 
       this.validateModifiers()
-      // this.validateActions()
+      this.validateActions()
 
       return true
     } catch (e) {
@@ -210,6 +210,10 @@ export default class Condition {
   }
 
   validateKeys() {
+    if (!('action' in this.data)) {
+      throw new Error('Required property missing: action')
+    }
+
     for (const key in this.data) {
       if (validKeys.indexOf(key) === -1) {
         throw new Error(`Invalid property: ${key}`)
@@ -220,7 +224,7 @@ export default class Condition {
   validateModifiers() {
     let matchModifierCount = 0
     let modifier: string = ''
-    const modifierList = Object.keys(matchModifiers)
+    const modifierList = Object.keys(MatchModifiers)
     const allModifiers = validModifiers.concat(modifierList)
 
     this.modifiers.forEach(key => {
@@ -228,7 +232,7 @@ export default class Condition {
         throw new Error(`Invalid modifier: ${key}`)
       }
 
-      if (key in matchModifiers) {
+      if (key in MatchModifiers) {
         matchModifierCount++
         modifier = key
 
@@ -242,7 +246,7 @@ export default class Condition {
       modifier = 'includes'
     }
 
-    this.matchPattern = matchModifiers[modifier]
+    this.matchPattern = MatchModifiers[modifier]
   }
 
   validateType(obj: Object, key: string, expectedType: string) {
@@ -270,6 +274,16 @@ export default class Condition {
     if (!(typeof value === expectedType)) {
       console.error(this.data)
       throw new Error(`${key} must be ${expectedType}, but got ${typeof value} (${value})`)
+    }
+  }
+
+  validateActions() {
+    if (this.actions.length < 1) {
+      throw new Error('At least 1 action is required')
+    }
+
+    if (this.actions.indexOf('reply') > -1 && typeof this.data.reply === 'undefined') {
+      throw new Error('Reply property missing for reply action')
     }
   }
 
