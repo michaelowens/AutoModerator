@@ -27,6 +27,11 @@ class Discord extends EventEmitter {
     this.bot.on('messageDelete', this.onMessageDelete.bind(this))
     this.bot.on('messageDeleteBulk', this.onMessageDeleteBulk.bind(this))
     this.bot.on('channelDelete', this.onChannelDelete.bind(this))
+    // Maybe cache roles using the following events if performance on role-based
+    // conditions is bad:
+    // guildRoleCreate
+    // guildRoleDelete
+    // guildRoleUpdate
   }
 
   loadServerConfigMessageLog() {
@@ -99,9 +104,9 @@ class Discord extends EventEmitter {
       }
     }
 
-    if (message.content === 'ping') {
-      message.reply('pong')
-    }
+    // if (message.content === 'ping') {
+    //   message.reply('pong')
+    // }
   }
 
   onMessageUpdate(oldMessage: DiscordJS.Message, newMessage: DiscordJS.Message) {

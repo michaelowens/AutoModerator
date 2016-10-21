@@ -130,7 +130,56 @@ export default class Condition {
     })
   }
 
+  matchesAgainstUserConditions(message: DiscordJS.Message) {
+    if (!('user' in this.data)) {
+      return true
+    }
+
+    const user: DiscordJS.GuildMember = message.member
+
+    for (let property in this.data.user) {
+      let value = this.data.user[property]
+      let comparator = '='
+      let foundComparator = value.match(/^(==?|<|>)/)
+
+      if (foundComparator) {
+        comparator = foundComparator[0]
+
+        value = value.substring(comparator.length).trim()
+
+        if (comparator === '==') {
+          comparator = '='
+        }
+      }
+
+      if (property === 'role') {
+        const matchRole = message.guild.roles.find(role => {
+          return role.name.toLowerCase() === value.toLowerCase()
+        })
+        const rolePosition = matchRole.position
+
+        if (comparator === '<') {
+          return user.highestRole.position < rolePosition
+        }
+        else if (comparator === '>') {
+          return user.highestRole.position > rolePosition
+        }
+        else if (comparator === '=') {
+          return user.highestRole.position == rolePosition
+        }
+      }
+    }
+  }
+
   matchesAgainstMessage(message: DiscordJS.Message) {
+    // Check against user conditions first
+    if ('user' in this.data) {
+      if (!this.matchesAgainstUserConditions(message)) {
+        console.log('user does not match')
+        return false
+      }
+    }
+
     if ('channels' in this.data) {
       if (!(message.channel instanceof DiscordJS.TextChannel)) {
         return

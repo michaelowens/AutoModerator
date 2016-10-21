@@ -1618,6 +1618,10 @@ declare module 'discord.js' {
      */
     guild: Guild;
     /**
+     * The role of the member with the highest position
+     */
+    highestRole: Role;
+    /**
      * The user that this guild member instance Represents
      */
     user: User;
@@ -3071,6 +3075,7 @@ declare module 'discord.js' {
 		 * collection.find(val => val.id === '123123...');
 		 */
     find(key: K, value: T): T;
+    find(fn: (element: T) => boolean): T;
 		/**
 		 * Returns an array of items where `item[prop] === value` of the collection
 		 * @param {string} prop The property to test against

@@ -16,6 +16,8 @@ Conditions are put in the config channel configured in the `config.yml` file (#a
 - message
 - modifiers
 - reply
+- user
+ - role
 
 Currently the following modifiers are implemented:
 
