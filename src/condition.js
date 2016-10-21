@@ -5,11 +5,12 @@ import Discord from './bot/discord'
 import Config from './config'
 import {ActionFactory} from './action'
 import type {Action} from './action'
+import url from 'url'
 
 export type ConditionValues = {
   action: string,
   message: string | string[],
-  domain: string[],
+  domains: string[],
   command: string,
   channels: string[],
   reply: string,
@@ -37,7 +38,7 @@ export const MatchModifiers = {
 }
 export const validModifiers = ['inverse', 'regex', 'case-sensitive']
 export const validKeys = [
-  'action', 'message', 'reply', 'user', 'domain', 'channels', 'command', 'warn',
+  'action', 'message', 'reply', 'user', 'domains', 'channels', 'command', 'warn',
   'warn_user', 'modifiers', 'dm'
 ]
 
@@ -47,7 +48,7 @@ export const defaultConditionValues: ConditionValues = {
   reply: '',
   user: {},
   channels: [],
-  domain: [],
+  domains: [],
   command: '',
   modifiers: [],
   warn: '',
@@ -55,6 +56,8 @@ export const defaultConditionValues: ConditionValues = {
   dm: '',
   priority: 0
 }
+
+export const URLRegex = /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[.\!\/\\w]*))?)/ig
 
 export default class Condition {
   server: DiscordJS.Guild
@@ -187,6 +190,24 @@ export default class Condition {
 
       if (this.data.channels.indexOf(message.channel.name) === -1) {
         return false
+      }
+    }
+
+    if ('domains' in this.data) {
+      const urls = message.content.match(URLRegex)
+
+      if (urls) {
+        for (let foundUrl of urls) {
+          const parsedUrl = url.parse(foundUrl)
+          if (!parsedUrl.hostname) {
+            continue
+          }
+
+          const parsedHostname = (parsedUrl.hostname || '').toLowerCase()
+          if (this.data.domains.indexOf(parsedHostname) > -1) {
+            return true
+          }
+        }
       }
     }
 

@@ -1994,7 +1994,7 @@ declare module 'discord.js' {
     /**
      * A list of embeds in the message - e.g. YouTube Player
      */
-    embeds: Array<Embed>;
+    embeds: Array<MessageEmbed>;
     /**
      * A collection of attachments in the message - e.g. Pictures - mapped by their ID.
      */

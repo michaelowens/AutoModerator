@@ -13,6 +13,7 @@ Conditions are put in the config channel configured in the `config.yml` file (#a
 - action
 - channels
 - dm
+- domains
 - message
 - modifiers
 - reply
